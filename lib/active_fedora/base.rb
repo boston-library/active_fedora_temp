@@ -82,6 +82,7 @@ module ActiveFedora
     # +:namespace+ value to Fedora::Repository.nextid to generate the next pid available within
     # the given namespace.
     def initialize(attrs = nil)
+      puts 'initialize called with attrs: ' + attrs.to_s
       attrs = {} if attrs.nil?
       @association_cache = {}
       attributes = attrs.dup
@@ -111,6 +112,8 @@ module ActiveFedora
     #   post.init_with(DigitalObject.find(pid))
     #   post.properties.title # => 'hello world'
     def init_with(inner_obj)
+      puts 'This is where I innit'
+      puts self.class.to_s
       @association_cache = {}
       @inner_object = inner_obj
       unless @inner_object.is_a? SolrDigitalObject
@@ -288,8 +291,21 @@ module ActiveFedora
 
     # Examine the :has_model assertions in the RELS-EXT.  Adapt this class to the first first known model
     def adapt_to_cmodel
-      the_model = ActiveFedora::ContentModel.known_models_for( self ).first
-      self.class != the_model ? self.adapt_to(the_model) : self
+      puts 'adapt_to_cmodel is called'
+      best_model_match = nil
+
+      ActiveFedora::ContentModel.known_models_for( self ).each {|model_value|
+
+        # Use only the first match for initial consideration.
+        best_model_match ||= model_value
+
+        # If there is an inheritance structure, use the most specific case.
+        if best_model_match > model_value
+          best_model_match = model_value
+        end
+      }
+
+      self.class != best_model_match ? self.adapt_to(best_model_match) : self
     end
     
     # ** EXPERIMENTAL **

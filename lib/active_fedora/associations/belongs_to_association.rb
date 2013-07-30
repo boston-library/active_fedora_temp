@@ -33,7 +33,8 @@ module ActiveFedora
           return if pid.empty?          
           class_name = @reflection.options[:class_name] ? @reflection.options[:class_name] : @reflection.class_name
           query = construct_query(pid, class_name)    
-          solr_result = SolrService.query(query) 
+          solr_result = SolrService.query(query)
+          puts 'match2'
           return ActiveFedora::SolrService.reify_solr_results(solr_result).first
         end
 
@@ -53,6 +54,7 @@ module ActiveFedora
           return if ids.empty? 
           ids.each do |id|
             result = SolrService.query(ActiveFedora::SolrService.construct_query_for_pids([id]))
+            puts 'match3'
             hit = ActiveFedora::SolrService.reify_solr_results(result).first
             # We remove_relationship on subjects that match the same class, or if the subject is nil 
             if hit.class.to_s == class_name || hit.nil?

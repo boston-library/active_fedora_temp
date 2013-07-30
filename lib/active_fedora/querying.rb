@@ -60,6 +60,7 @@ module ActiveFedora
     # @param [Hash] opts 
     # @option opts [Boolean] :cast when true, examine the model and cast it to the first known cModel
     def find_each( conditions={}, opts={})
+      puts 'Possible section 1'
       find_in_batches(conditions, opts.merge({:fl=>SOLR_DOCUMENT_ID})) do |group|
         group.each do |hit|
           yield(find_one(hit[SOLR_DOCUMENT_ID], opts[:cast]))
@@ -107,8 +108,14 @@ module ActiveFedora
     # @example because the object hydra:dataset1 asserts it is a Dataset (hasModel info:fedora/afmodel:Dataset), return a Dataset object (not a Book).
     #   Book.find_one("hydra:dataset1") 
     def find_one(pid, cast=false)
+      puts 'inside of find_one'
+      puts self.class.to_s
       inner = DigitalObject.find(self, pid)
+      puts inner.to_s
+      puts inner.class.to_s
       af_base = self.allocate.init_with(inner)
+      puts af_base.to_s
+      puts cast
       cast ? af_base.adapt_to_cmodel : af_base
     end
     

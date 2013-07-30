@@ -108,6 +108,8 @@ module ActiveFedora
     end
 
     def find_with_ids(ids, cast)
+      puts 'Possible location 2'
+      puts cast
       expects_array = ids.first.kind_of?(Array)
       return ids.first if expects_array && ids.first.empty?
 
@@ -125,6 +127,7 @@ module ActiveFedora
     end
 
     def find_some(ids, cast)
+      puts 'Possible location 3'
       ids.map{|id| @klass.find_one(id, cast)}
     end
 
